@@ -1,7 +1,4 @@
 version: 0.2
-env:
-  variables:
-    DUMMY: "WHY_IS_THIS_REQUIRED?"
 phases:
   build:
     commands:
