@@ -1,0 +1,16 @@
+version: 0.2
+env:
+  variables:
+    DUMMY: "WHY_IS_THIS_REQUIRED?"
+phases:
+  build:
+    commands:
+      - export S3_SUBFOLDER=$(date '+%Y%m%d%H%M%S')
+      - yarn install
+      - aws s3 sync $(pwd)/cloud-formation-pipeline/ s3://jorge-demo-artifacts-bucket/${S3_SUBFOLDER}/ --exclude "*" --include "deploy-*.yml"
+      - printf '{"ArtifactsLocation":"%s"}' jorge-demo-artifacts-bucket/${S3_SUBFOLDER} > $(pwd)/build.json
+artifacts:
+  files:
+    - cloud-formation-pipeline/deploy-master.yml
+    - build.json
+  discard-paths: yes

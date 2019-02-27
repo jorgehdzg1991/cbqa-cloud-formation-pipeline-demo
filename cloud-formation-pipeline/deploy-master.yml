@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Serverless CFN pipeline demo deployment
+Parameters:
+  ProjectName:
+    Type: String
+  Env:
+    Type: String
+  ArtifactsPath:
+    Type: String
+  LambdaLocationBucket:
+    Type: String
+Resources:
+  LambdaRoleStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${LambdaLocationBucket}/${ArtifactsPath}/deploy-lambda-role.yml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        Env: !Ref Env
+  
+  LambdaFunctionStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${LambdaLocationBucket}/${ArtifactsPath}/deploy-lambda.yml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        Env: !Ref Env
+        RoleArn: !GetAtt LambdaRoleStack.Outputs.RoleArn
