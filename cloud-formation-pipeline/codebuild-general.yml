@@ -9,8 +9,6 @@ Parameters:
     Type: String
   ProjectName:
     Type: String
-  ArtifactBucket:
-    Type: String
   Env:
     Type: String
 Resources:

@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Code pipeline
+Parameters:
+  PipelineName:
+    Type: String
+  MainStackName:
+    Type: String
+  Role:
+    Type: String
+  CodeRepo:
+    Type: String
+  ProjectName:
+    Type: String
+  Branch:
+    Type: String
+  GitHubOAuthToken:
+    Type: String
+  Env:
+    Type: String
+  ArtifactBucket:
+    Type: String
+  S3TempBucket:
+    Type: String
+Resources:
+
+  CFNExecutionRole:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/iam-cfn-role.yml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        Env: !Ref Env
+  
+  CodeBuildLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-lambda-build.yml
+      Parameters:
+        ProjectName: !Ref ProjectName
+        Role: !Ref Role
+        ArtifactBucket: !Ref ArtifactBucket
+        BuildSpecFile: "buildspec.yml"
+        Env: !Ref Env
+
+  CodeBuildLint:
+    Type: AWS::CloudFormation::Stack
+    Condition: CreateBuildResources
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-project.yml
+      Parameters:
+        BuildStep: "lint"
+        BuildSpecFile: "buildspec-lint.yml"
+        Role: !Ref Role
+        ProjectName: !Ref ProjectName
+        Env: !Ref Env
+  
+  CodeBuildTest:
+    Type: AWS::CloudFormation::Stack
+    Condition: CreateBuildResources
+    Properties:
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-project.yml
+      Parameters:
+        BuildStep: "lint"
+        BuildSpecFile: "buildspec-test.yml"
+        Role: !Ref Role
+        ProjectName: !Ref ProjectName
+        Env: !Ref Env
