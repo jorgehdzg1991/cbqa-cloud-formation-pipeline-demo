@@ -34,7 +34,7 @@ Resources:
   CodeBuildLambda:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-lambda-build.yml
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-lambda.yml
       Parameters:
         ProjectName: !Ref ProjectName
         Role: !Ref Role
@@ -46,7 +46,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: CreateBuildResources
     Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-project.yml
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-general.yml
       Parameters:
         BuildStep: "lint"
         BuildSpecFile: "buildspec-lint.yml"
@@ -58,7 +58,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: CreateBuildResources
     Properties:
-      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-project.yml
+      TemplateURL: !Sub https://s3-${AWS::Region}.amazonaws.com/${S3TempBucket}/codebuild-general.yml
       Parameters:
         BuildStep: "lint"
         BuildSpecFile: "buildspec-test.yml"
