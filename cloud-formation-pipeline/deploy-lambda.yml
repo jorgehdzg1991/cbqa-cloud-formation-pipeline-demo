@@ -9,11 +9,7 @@ Parameters:
     Type: String
 Resources:
   HelloWorldFunction:
-<<<<<<< HEAD
-    Type: AWS::Serverless::Function
-=======
     Type: AWS::Lambda::Function
->>>>>>> Initial commit
     Properties:
       FunctionName: !Sub ${ProjectName}-${Env}-hello-world
       CodeUri: ../src
