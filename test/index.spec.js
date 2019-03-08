@@ -9,7 +9,7 @@ describe('Demo app', () => {
 
         sayHello({}, null, callback);
 
-        expect(callback.calledOnce).toEqual(true);
+        expect(callback.called).toEqual(true);
         expect(callback.args[0][1]).toEqual({ greeting: 'Hello World!' });
     });
 
@@ -17,9 +17,21 @@ describe('Demo app', () => {
         const callback = sinon.fake();
         const name = faker.name.firstName();
 
-        sayHello({name}, null, callback);
+        sayHello({ name }, null, callback);
 
-        expect(callback.calledOnce).toEqual(true);
+        expect(callback.called).toEqual(true);
         expect(callback.args[0][1]).toEqual({ greeting: `Hello ${name}!` });
+    });
+
+    it('should error out if name is Slim Shady', () => {
+        const callback = sinon.fake();
+        const name = 'Slim Shady';
+
+        sayHello({ name }, null, callback);
+
+        expect(callback.called).toEqual(true);
+        expect(callback.args[0][0]).toEqual(
+            'Will the real Slim Shady please stand up?'
+        );
     });
 });

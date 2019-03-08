@@ -10,7 +10,7 @@ Parameters:
 Resources:
   HelloWorldFunction:
     Properties:
-      CodeUri: s3://deployment-files-bucket/f957464547517cf5bc5ccbac68bfbcfe
+      CodeUri: s3://deployment-files-bucket/99410bb7bdfe6bab87826ce967faadd8
       Environment:
         Variables:
           ENV:
