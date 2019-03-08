@@ -1,15 +1,14 @@
-# exit when any command fails
-set -e
-
 echo ":::: Staging deployment starting"
 
-echo ":::: Executing lint"
 
-yarn lint
 
-echo ":::: Executing unit tests"
 
-yarn test
+#########################################
+# ::::::::::::::: Setup :::::::::::::::::
+#########################################
+
+# exit when any command fails
+set -e
 
 # local variables
 CURRENT_DATE=$(date '+%Y%m%d%H%M%S')
@@ -18,17 +17,35 @@ ENV="dev"
 BUCKET_NAME="deployment-files-bucket"
 S3_SUBFOLDER="deployments/$ENV/$CURRENT_DATE"
 
+
+
+
+#########################################
+# ::::::::::::: PreDeploy :::::::::::::::
+#########################################
+
+echo ":::: Executing lint"
+yarn lint
+
+echo ":::: Executing unit tests"
+yarn test
+
+
+
+
+#########################################
+# ::::::::::::::: Build :::::::::::::::::
+#########################################
+
 echo ":::: Compiling stack templates"
 cfn-include ./cloudformation/stacks/deploy-lambda-role.yml -y > ./cloudformation/compiled/deploy-lambda-role.yml
 cfn-include ./cloudformation/stacks/deploy-lambda.yml -y > ./cloudformation/compiled/deploy-lambda.yml
 
 echo ":::: Packaging stacks"
-
 sam package \
     --template-file ./cloudformation/compiled/deploy-lambda-role.yml \
     --s3-bucket ${BUCKET_NAME} \
     --output-template-file cloudformation/packaged/deploy-lambda-role.yml
-
 sam package \
     --template-file ./cloudformation/compiled/deploy-lambda.yml \
     --s3-bucket ${BUCKET_NAME} \
@@ -39,6 +56,13 @@ aws s3 sync \
     cloudformation/packaged/ "s3://$BUCKET_NAME/$S3_SUBFOLDER/compiled_templates" \
     --exclude "*" \
     --include "*.yml"
+
+
+
+
+#########################################
+# :::::::::::::: Deploy :::::::::::::::::
+#########################################
 
 echo ":::: Starting deployment"
 sam deploy \

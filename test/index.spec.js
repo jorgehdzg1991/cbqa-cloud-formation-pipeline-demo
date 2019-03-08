@@ -1,7 +1,7 @@
 const expect = require('expect');
 const sinon = require('sinon');
 const faker = require('faker');
-const {sayHello} = require('../src/index');
+const { sayHello } = require('../src/index');
 
 describe('Demo app', () => {
     it('should say hello world', () => {
@@ -10,7 +10,10 @@ describe('Demo app', () => {
         sayHello({}, null, callback);
 
         expect(callback.called).toEqual(true);
-        expect(callback.args[0][1]).toEqual({ greeting: 'Hello World!' });
+
+        const call = callback.getCall(0);
+
+        expect(call.args[1]).toEqual({ greeting: 'Hello World!' });
     });
 
     it('should say hello to a user', () => {
@@ -20,7 +23,10 @@ describe('Demo app', () => {
         sayHello({ name }, null, callback);
 
         expect(callback.called).toEqual(true);
-        expect(callback.args[0][1]).toEqual({ greeting: `Hello ${name}!` });
+
+        const call = callback.getCall(0);
+
+        expect(call.args[1]).toEqual({ greeting: `Hello ${name}!` });
     });
 
     it('should error out if name is Slim Shady', () => {
@@ -30,7 +36,10 @@ describe('Demo app', () => {
         sayHello({ name }, null, callback);
 
         expect(callback.called).toEqual(true);
-        expect(callback.args[0][0]).toEqual(
+
+        const call = callback.getCall(0);
+
+        expect(call.args[0]).toEqual(
             'Will the real Slim Shady please stand up?'
         );
     });
