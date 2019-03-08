@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 Description: Lambda function
 Parameters:
   ProjectName:
@@ -9,10 +10,10 @@ Parameters:
     Type: String
 Resources:
   HelloWorldFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub ${ProjectName}-${Env}-hello-world
-      CodeUri: ../src
+      CodeUri: ../../src
       Handler: index.sayHello
       MemorySize: 128
       Role: !Ref RoleArn

@@ -1,7 +1,13 @@
-exports.sayHello = (name = 'World') => {
-    const {ENV} = process.env;
+exports.sayHello = (event, context, callback) => {
+    console.log(':::: Called sayHello lambda');
 
-    console.log(`Running "sayHello" lambda on the ${ENV} environment.`);
+    let { name } = event;
+    
+    if (!name) {
+        name = 'World';
+    }
+    
+    console.log(':::: Name =', name)
 
-    return `Hello ${name}!`;
+    callback(null, `Hello ${name}!`);
 };
