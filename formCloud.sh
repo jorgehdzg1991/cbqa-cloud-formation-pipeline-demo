@@ -1,3 +1,6 @@
+# exit when any command fails
+set -e
+
 echo ":::: Staging deployment starting"
 
 echo ":::: Executing lint"
@@ -10,10 +13,10 @@ yarn test
 
 # local variables
 CURRENT_DATE=$(date '+%Y%m%d%H%M%S')
-PROJECT_NAME="hello-world"
+PROJECT_NAME="lambda-cfn-demo"
 ENV="dev"
 BUCKET_NAME="deployment-files-bucket"
-S3_SUBFOLDER="$CURRENT_DATE/compiled_templates"
+S3_SUBFOLDER="deployments/$ENV/$CURRENT_DATE"
 
 echo ":::: Compiling stack templates"
 cfn-include ./cloudformation/stacks/deploy-lambda-role.yml -y > ./cloudformation/compiled/deploy-lambda-role.yml
@@ -33,19 +36,19 @@ sam package \
 
 echo ":::: Uploading compiled stacks"
 aws s3 sync \
-    cloudformation/packaged/ s3://${BUCKET_NAME}/${S3_SUBFOLDER}/ \
+    cloudformation/packaged/ "s3://$BUCKET_NAME/$S3_SUBFOLDER/compiled_templates" \
     --exclude "*" \
     --include "*.yml"
 
 echo ":::: Starting deployment"
 sam deploy \
     --template-file cloudformation/deploy-master.yml \
-    --stack-name hello-world-cfn \
+    --stack-name ${PROJECT_NAME} \
     --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
     --parameter-overrides \
         ProjectName=${PROJECT_NAME} \
         Env=${ENV} \
         DeployFilesBucket=${BUCKET_NAME} \
-        ArtifactsPath=${S3_SUBFOLDER} \
+        ArtifactsPath="$S3_SUBFOLDER/compiled_templates" \
     --s3-bucket ${BUCKET_NAME} \
-    --s3-prefix ${CURRENT_DATE}/deploy/${ENV}
+    --s3-prefix $S3_SUBFOLDER

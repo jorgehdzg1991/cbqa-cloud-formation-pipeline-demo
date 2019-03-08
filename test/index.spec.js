@@ -10,16 +10,16 @@ describe('Demo app', () => {
         sayHello({}, null, callback);
 
         expect(callback.calledOnce).toEqual(true);
-        expect(callback.args[0][1]).toEqual('Hello World!');
+        expect(callback.args[0][1]).toEqual({ greeting: 'Hello World!' });
     });
 
     it('should say hello to a user', () => {
-        const callback = sinon.fake(),
-            name = faker.name.firstName();
+        const callback = sinon.fake();
+        const name = faker.name.firstName();
 
         sayHello({name}, null, callback);
 
         expect(callback.calledOnce).toEqual(true);
-        expect(callback.args[0][1]).toEqual(`Hello ${name}!`);
+        expect(callback.args[0][1]).toEqual({ greeting: `Hello ${name}!` });
     });
 });

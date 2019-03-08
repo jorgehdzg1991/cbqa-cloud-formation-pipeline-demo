@@ -9,5 +9,5 @@ exports.sayHello = (event, context, callback) => {
 
     console.log(':::: Name =', name);
 
-    callback(null, `Hello ${name}!`);
+    callback(null, { greeting: `Hello ${name}!` });
 };
