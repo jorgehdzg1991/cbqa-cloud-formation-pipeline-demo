@@ -1,5 +1,13 @@
 echo ":::: Staging deployment starting"
 
+echo ":::: Executing lint"
+
+yarn lint
+
+echo ":::: Executing unit tests"
+
+yarn test
+
 # local variables
 CURRENT_DATE=$(date '+%Y%m%d%H%M%S')
 PROJECT_NAME="hello-world"

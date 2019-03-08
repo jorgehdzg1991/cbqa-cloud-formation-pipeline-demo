@@ -1,18 +1,25 @@
 const expect = require('expect');
+const sinon = require('sinon');
 const faker = require('faker');
 const {sayHello} = require('../src/index');
 
 describe('Demo app', () => {
     it('should say hello world', () => {
-        const result = sayHello();
+        const callback = sinon.fake();
 
-        expect(result).toEqual('Hello World!');
+        sayHello({}, null, callback);
+
+        expect(callback.calledOnce).toEqual(true);
+        expect(callback.args[0][1]).toEqual('Hello World!');
     });
 
     it('should say hello to a user', () => {
-        const name = faker.name.firstName(),
-            result = sayHello(name);
+        const callback = sinon.fake(),
+            name = faker.name.firstName();
 
-        expect(result).toEqual(`Hello ${name}!`);
+        sayHello({name}, null, callback);
+
+        expect(callback.calledOnce).toEqual(true);
+        expect(callback.args[0][1]).toEqual(`Hello ${name}!`);
     });
 });
